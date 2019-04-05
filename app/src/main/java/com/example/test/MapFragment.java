@@ -59,15 +59,6 @@ public class MapFragment extends Fragment {
                         .position(new LatLng(37.4219999, -122.0862462))
                         .title("Spider Man")
                         .icon(bitmapDescriptorFromVector(getActivity(),R.drawable.spider)));
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(37.4629101,-122.2449094))
-                        .title("Iron Man")
-                        .snippet("His Talent : Plenty of money"));
-
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(37.3092293,-122.1136845))
-                        .title("Captain America"));
             }
         });
 
