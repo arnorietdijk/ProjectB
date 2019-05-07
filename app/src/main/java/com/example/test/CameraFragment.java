@@ -1,8 +1,10 @@
 package com.example.test;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -13,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
+
 import static android.app.Activity.RESULT_OK;
 
 
@@ -20,38 +24,52 @@ public class CameraFragment extends Fragment {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView buckysImageView;
+    Button buckysButton;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle SavedInstanceState){
-        Button buckysButton = (Button)getView().findViewById(R.id.buckysButton);
-        ImageView imageView = (ImageView) getView().findViewById(R.id.buckysImageView);
-        return inflater.inflate(R.layout.fragment_camera, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        final View rootView = inflater.inflate(R.layout.fragment_camera,
+                container, false);
+
+        buckysButton = (Button) rootView.findViewById(R.id.buckysButton);
+        buckysImageView = (ImageView) rootView.findViewById(R.id.buckysImageView);
+
+        buckysButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent,
+                        REQUEST_IMAGE_CAPTURE);
+
+            }
+        });
+
+        return rootView;
+
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == Activity.RESULT_OK) {
 
-        if(!hasCamera())
-            buckysButton.setEnabled(false);
+                Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-    }
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
 
-    private boolean hasCamera(){
-        return getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
-    }
+                // convert byte array to Bitmap
 
-    public void launchCamera(View view){
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-    }
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+                        byteArray.length);
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap photo = (Bitmap) extras.get("data");
-            buckysImageView.setImageBitmap(photo);
+                buckysImageView.setImageBitmap(bitmap);
+
+            }
         }
     }
-
 }
