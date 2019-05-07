@@ -1,16 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:theme="@android:style/Theme.Black.NoTitleBar"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:theme="@android:style/Theme.Black.NoTitleBar"
-    android:background="@android:color/holo_red_light">
+    android:scaleType="fitXY"
+    tools:context=".CameraFragment">>
 
-    <TextView
+    <Button
+        android:id="@+id/buckysButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Camera Fragment"
-        android:textSize="30sp"
-        android:layout_centerInParent="true"/>
+        android:layout_marginEnd="136dp"
+        android:layout_marginBottom="104dp"
+        android:contentDescription="@string/app_name"
+        android:onClick="launchCamera"
+        android:text="@string/take_photo02"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/buckysImageView"
+        android:layout_width="218dp"
+        android:layout_height="197dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="190dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="192dp"
+        app:layout_constraintBottom_toTopOf="@+id/buckysButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.576"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </RelativeLayout>
