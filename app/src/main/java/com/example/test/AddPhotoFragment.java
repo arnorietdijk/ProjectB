@@ -20,7 +20,7 @@ import java.io.ByteArrayOutputStream;
 
 import static android.app.Activity.RESULT_OK;
 
-public class CameraFragment extends Fragment {
+public class AddPhotoFragment extends Fragment {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView buckysImageView;
@@ -36,6 +36,7 @@ public class CameraFragment extends Fragment {
 
         buckysButton = (Button) rootView.findViewById(R.id.buckysButton);
         buckysImageView = (ImageView) rootView.findViewById(R.id.buckysImageView);
+
 
         buckysButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +88,11 @@ public class CameraFragment extends Fragment {
 
                 buckysImageView.setImageBitmap(bitmap);
 
+                Intent intent = new Intent(getActivity(), AddActivity.class);
+                intent.putExtra("captured_image", byteArray);
+                startActivity(intent);
+
+
             }
         }
 
@@ -97,4 +103,4 @@ public class CameraFragment extends Fragment {
 
 
 
-    }
+}
