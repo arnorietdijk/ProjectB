@@ -93,7 +93,7 @@ public class MemoriesFragment extends Fragment {
         buttonPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fr = new CameraFragment();
+                Fragment fr = new AddPhotoFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fm.beginTransaction();
                 fragmentTransaction.replace(R.id.main_frame, fr);
