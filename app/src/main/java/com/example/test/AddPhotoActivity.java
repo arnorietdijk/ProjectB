@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-public class AddActivity extends AppCompatActivity implements LocationListener {
+public class AddPhotoActivity extends AppCompatActivity implements LocationListener {
 
     private static final String FILE_NAME = "memories.txt";
     private LocationManager locationManager;
@@ -50,7 +50,7 @@ public class AddActivity extends AppCompatActivity implements LocationListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add);
+        setContentView(R.layout.activity_add_photo);
 
         Paint mTextPaint = new Paint();
 
@@ -63,6 +63,15 @@ public class AddActivity extends AppCompatActivity implements LocationListener {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        Bundle mBundle = getIntent().getExtras();
+        byte[] mBytes = mBundle.getByteArray("captured_image");
+
+        Bitmap mBitmap = BitmapFactory.decodeByteArray(mBytes, 0, mBytes.length);
+        ImageView mImageView = (ImageView) findViewById(R.id.imageView2);
+
+        mImageView.setImageBitmap(mBitmap);
+
 
         Button Cancel = (Button) findViewById(R.id.Cancel);
         Cancel.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +91,7 @@ public class AddActivity extends AppCompatActivity implements LocationListener {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                locationTrack = new LocationTrack(AddActivity.this);
+                locationTrack = new LocationTrack(AddPhotoActivity.this);
                 boolean checked = ((CheckBox) v).isChecked();
                 // Check which checkbox was clicked
                 if (checked) {
@@ -90,7 +99,7 @@ public class AddActivity extends AppCompatActivity implements LocationListener {
                     if (locationTrack.canGetLocation()) {
                         double longitude = locationTrack.getLongitude();
                         double latitude = locationTrack.getLatitude();
-                        final String address = getAddress(AddActivity.this,latitude,longitude);
+                        final String address = getAddress(AddPhotoActivity.this,latitude,longitude);
                         //Toast.makeText(getApplicationContext(), address, Toast.LENGTH_SHORT).show();
                         addLocation.setText(address);
                     } else {
@@ -138,14 +147,14 @@ public class AddActivity extends AppCompatActivity implements LocationListener {
 
             SQLITEDATABASE.execSQL(SQLiteQuery);
 
-            Toast.makeText(AddActivity.this,"Data Submit Successfully", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddPhotoActivity.this,"Data Submit Successfully", Toast.LENGTH_LONG).show();
 
             ClearEditTextAfterDoneTask();
 
         }
         else {
 
-            Toast.makeText(AddActivity.this,"Please Fill All the Fields", Toast.LENGTH_LONG).show();
+            Toast.makeText(AddPhotoActivity.this,"Please Fill All the Fields", Toast.LENGTH_LONG).show();
         }
     }
 

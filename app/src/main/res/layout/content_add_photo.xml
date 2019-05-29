@@ -135,22 +135,7 @@
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible"
             tools:srcCompat="@tools:sample/avatars"/>
-        <TextView
-            android:id="@+id/menu_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:lines="1"
-            android:text="No image added"
-            android:textColor="@color/colorBlack" />
-
-        <ImageView
-            android:id="@+id/menu_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
 
     </FrameLayout>
 
