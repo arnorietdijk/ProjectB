@@ -40,7 +40,6 @@ public class CameraFragment extends Fragment {
         buckysButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent,
                         REQUEST_IMAGE_CAPTURE);
@@ -91,10 +90,4 @@ public class CameraFragment extends Fragment {
         }
 
     }
-
-
-
-
-
-
-    }
+}

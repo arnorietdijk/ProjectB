@@ -18,8 +18,6 @@ import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 
-import static android.app.Activity.RESULT_OK;
-
 public class AddPhotoFragment extends Fragment {
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -55,12 +53,10 @@ public class AddPhotoFragment extends Fragment {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 mBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
-
 // Pass it to intent to send in NextActitivy
                 Intent intent = new Intent(getActivity(), AddActivity.class);
                 intent.putExtra("captured_image", byteArray);
                 startActivity(intent);
-
             }
         });*/
 
@@ -88,19 +84,11 @@ public class AddPhotoFragment extends Fragment {
 
                 buckysImageView.setImageBitmap(bitmap);
 
-                Intent intent = new Intent(getActivity(), AddActivity.class);
+                Intent intent = new Intent(getActivity(), AddPhotoActivity.class);
                 intent.putExtra("captured_image", byteArray);
                 startActivity(intent);
-
-
             }
         }
 
     }
-
-
-
-
-
-
 }
