@@ -1,118 +1,277 @@
 package com.example.test;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Locale;
+
+import static android.app.Activity.RESULT_OK;
 
 public class MemoriesFragment extends Fragment {
-    Button addButton;
-    Context context;
-    @Override
+
+    EditText edtTitle, edtDes, edtLoc;
+    Button btnAdd, btnList, btnPic;
+    ImageView imageView;
+    CheckBox chkLoc;
+    LocationTrack locationTrack;
+
+    final int REQUEST_CODE_GALLERY = 999;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private LocationManager locationManager;
+    private Location onlyOneLocation;
+    private final int REQUEST_FINE_LOCATION = 1234;
+
+    public static SQLiteHelper sqLiteHelper;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_memories,
                 container, false);
 
-        addButton = (Button) rootView.findViewById(R.id.addButton);
+        edtTitle = (EditText) rootView.findViewById(R.id.edtTitle);
+        edtDes = (EditText) rootView.findViewById(R.id.edtDes);
+        edtLoc = (EditText) rootView.findViewById(R.id.edtLoc);
+        Button btnChoose = (Button) rootView.findViewById(R.id.btnChoose);
+        btnAdd = (Button) rootView.findViewById(R.id.btnAdd);
+        btnList = (Button) rootView.findViewById(R.id.btnList);
+        btnPic = (Button) rootView.findViewById(R.id.btnPic);
+        imageView = (ImageView) rootView.findViewById(R.id.imageView);
+        chkLoc = (CheckBox) rootView.findViewById(R.id.chkLoc);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
+
+        sqLiteHelper = new SQLiteHelper(getActivity(), "MemoryDB.sqlite", null, 1);
+
+        sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS FOOD(Id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR, description VARCHAR, location VARCHAR, image BLOB)");
+
+        btnChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopup(view);
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions( //Method of Fragment
+                            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                            REQUEST_CODE_GALLERY
+                    );
+                }
+            }
+        });
+        btnPic.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent,
+                        REQUEST_IMAGE_CAPTURE);
+            }
+        });
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    sqLiteHelper.insertData(
+                            edtTitle.getText().toString().trim(),
+                            edtDes.getText().toString().trim(),
+                            edtLoc.getText().toString().trim(),
+                            imageViewToByte(imageView)
+                    );
+                    Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
+                    edtTitle.setText("");
+                    edtDes.setText("");
+                    edtLoc.setText("");
+                    imageView.setImageResource(R.mipmap.ic_launcher);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MemoryList.class);
+                startActivity(intent);
+            }
+        });
+
+        chkLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationTrack = new LocationTrack(getActivity());
+                boolean checked = ((CheckBox) v).isChecked();
+                // Check which checkbox was clicked
+                if (checked) {
+
+                    if (locationTrack.canGetLocation()) {
+                        double longitude = locationTrack.getLongitude();
+                        double latitude = locationTrack.getLatitude();
+                        final String address = getAddress(getActivity(),latitude,longitude);
+                        //Toast.makeText(getApplicationContext(), address, Toast.LENGTH_SHORT).show();
+                        edtLoc.setText(address);
+                    } else {
+
+                        locationTrack.showSettingsAlert();
+                    }
+                } else {
+                    // Do your coding
+                }
             }
         });
 
         return rootView;
-
     }
 
-    public void showPopup(View anchorView) {
+    public String getAddress(Context ctx, double lat, double lng){
+        String fullAdd=null;
+        try{
+            Geocoder geocoder = new Geocoder(ctx, Locale.getDefault());
+            List<Address> addresses = geocoder.getFromLocation(lat,lng,1);
+            if(addresses.size()>0){
+                Address address = addresses.get(0);
+                fullAdd = address.getLocality();
 
-        final View popupView = getLayoutInflater().inflate(R.layout.popup_window, null);
+                String Location = address.getLocality();
+                String Zip = address.getPostalCode();
+                String Country = address.getCountryName();
+            }
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+        return fullAdd;
+    }
 
-        final PopupWindow popupWindow = new PopupWindow(popupView,
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        Button cancelPopupBtn = (Button) popupView.findViewById(R.id.cancelPopupBtn);
-        Button buttonPicture = (Button) popupView.findViewById(R.id.btnPicture);
-        Button buttonNoPicture = (Button) popupView.findViewById(R.id.btnNoPicture);
+    public void onLocationChanged(Location location) {
+        onlyOneLocation = location;
+        locationManager.removeUpdates((LocationListener) this);
+    }
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
+    public void onProviderEnabled(String provider) { }
+    public void onProviderDisabled(String provider) { }
 
-        // If the PopupWindow should be focusable
-        popupWindow.setFocusable(true);
-        popupWindow.setOutsideTouchable(false);
+    public static byte[] imageViewToByte(ImageView image) {
+        Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        return byteArray;
+    }
 
-        // If you need the PopupWindow to dismiss when when touched outside
-        popupWindow.setBackgroundDrawable(new ColorDrawable());
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        int location[] = new int[2];
+        if(requestCode == REQUEST_CODE_GALLERY){
+            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, REQUEST_CODE_GALLERY);
+            }
+            else {
+                Toast.makeText(getActivity().getApplicationContext(), "You don't have permission to access file location!", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
 
-        // Get the View's(the one that was clicked in the Fragment) location
-        anchorView.getLocationOnScreen(location);
+        switch (requestCode) {
+            case REQUEST_FINE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("gps", "Location permission granted");
+                    try {
+                        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        locationManager.requestLocationUpdates("gps", 0, 0, (LocationListener) this);
+                    } catch (SecurityException ex) {
+                        Log.d("gps", "Location permission did not work!");
+                    }
+                }
+                break;
+        }
 
-        // Using location, the PopupWindow will be displayed right under anchorView
-        popupWindow.showAtLocation(anchorView, Gravity.CENTER,
-                0, 0);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
-        View container = popupWindow.getContentView().getRootView();
-        if(container != null) {
-            WindowManager wm = (WindowManager)getActivity().getSystemService(Context.WINDOW_SERVICE);
-            WindowManager.LayoutParams p = (WindowManager.LayoutParams)container.getLayoutParams();
-            p.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            p.dimAmount = 0.8f;
-            if(wm != null) {
-                wm.updateViewLayout(container, p);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if(requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null){
+            Uri uri = data.getData();
+
+            try {
+                InputStream inputStream = getActivity().getApplicationContext().getContentResolver().openInputStream(uri);
+
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                imageView.setImageBitmap(bitmap);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         }
 
-        //close the popup window on button click
-        cancelPopupBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == Activity.RESULT_OK) {
 
-        buttonPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fr = new AddPhotoFragment();
-                FragmentManager fm = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fm.beginTransaction();
-                fragmentTransaction.replace(R.id.main_frame, fr);
-                popupWindow.dismiss();
-                fragmentTransaction.commit();
-            }
-        });
+                Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        buttonNoPicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddActivity.class);
-                startActivity(intent);
-                popupWindow.dismiss();
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                // convert byte array to Bitmap
+
+                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+                        byteArray.length);
+
+                imageView.setImageBitmap(bitmap);
+
             }
-        });
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
