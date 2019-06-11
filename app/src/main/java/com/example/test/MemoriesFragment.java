@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -81,6 +82,9 @@ public class MemoriesFragment extends Fragment {
         btnPic = (Button) rootView.findViewById(R.id.btnPic);
         imageView = (ImageView) rootView.findViewById(R.id.imageView);
         chkLoc = (CheckBox) rootView.findViewById(R.id.chkLoc);
+        final String strTitle = edtTitle.getText().toString().trim();
+        final String strDes = edtDes.getText().toString().trim();
+        final String strLoc = edtLoc.getText().toString().trim();
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
@@ -108,20 +112,27 @@ public class MemoriesFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                try{
-                    MainActivity.sqLiteHelper.insertData(
-                            edtTitle.getText().toString().trim(),
-                            edtDes.getText().toString().trim(),
-                            edtLoc.getText().toString().trim(),
-                            imageViewToByte(imageView)
-                    );
-                    Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
-                    edtTitle.setText("");
-                    edtDes.setText("");
-                    edtLoc.setText("");
-                    imageView.setImageResource(R.mipmap.ic_launcher);
-                }
-                catch (Exception e){
+                try {
+                    if (TextUtils.isEmpty(strTitle) || TextUtils.isEmpty(strDes) || TextUtils.isEmpty(strLoc)) {
+                        Toast.makeText(getActivity(), "please fill something in!", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        MainActivity.sqLiteHelper.insertData(
+                                edtTitle.getText().toString().trim(),
+                                edtDes.getText().toString().trim(),
+                                edtLoc.getText().toString().trim(),
+                                imageViewToByte(imageView)
+                        );
+
+                        Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
+
+                        edtTitle.setText("");
+                        edtDes.setText("");
+                        edtLoc.setText("");
+                        imageView.setImageResource(R.mipmap.ic_launcher);
+                    }
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

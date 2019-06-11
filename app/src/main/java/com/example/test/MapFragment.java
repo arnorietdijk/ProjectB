@@ -30,7 +30,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    Cursor cursor2;
+    List<Address> addresses = null;
 
     public MapFragment() {
 
@@ -52,128 +52,78 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mMap = googleMap;
-        List<Address> addresses = null;
+
         final CameraUpdate zoom = CameraUpdateFactory.zoomTo(5);
         final MarkerOptions mp = new MarkerOptions();
+        final Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM FOOD;");
         // get all data from sqlite
-        Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT location FROM FOOD;");
-        if(cursor.getCount() > 0)
-        {
-            if(cursor.moveToFirst())
+            if(cursor.getCount() > 0)
             {
-                do
+                if(cursor.moveToFirst())
                 {
-                    try
+                    do
                     {
-                        String loc = cursor.getString(0);
-
-                        Geocoder geocoder = new Geocoder(getActivity());
-
-                        try {
-                            addresses = geocoder.getFromLocationName(loc, 1);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        if (addresses.size() > 0) {
-                            double latitude = addresses.get(0).getLatitude();
-                            double longitude = addresses.get(0).getLongitude();
-
-                            mp.position(new LatLng(latitude, longitude));
-
-                            Log.e("teste map2", "inserted latitude " + latitude + ", inserted Longitude " + longitude);
-
-                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-                            final Marker m = mMap.addMarker(mp);
-                            mMap.moveCamera(center);
-                            mMap.animateCamera(zoom);
-
-                            cursor2 = MainActivity.sqLiteHelper.getData("SELECT image FROM FOOD");
-                            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-
-                                @Override
-                                public void onInfoWindowClick(Marker arg0) {
-                                    if(cursor2.getCount() > 0)
-                                    {
-                                        if(cursor2.moveToFirst())
-                                        {
-                                            do
-                                            {
-                                                try
-                                                {
-                                                    byte[] image = cursor2.getBlob(0);
-                                                    InfoWindowData info = new InfoWindowData();
-                                                    info.setImage(image);
-                                                    info.setHotel("Hotel : excellent hotels available");
-                                                    info.setFood("Food : all types of restaurants available");
-                                                    info.setTransport("Reach the site by bus, car and train.");
-
-                                                    CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(getActivity());
-                                                    mMap.setInfoWindowAdapter(customInfoWindow);
+                        try
+                        {
+                            final int id = cursor.getInt(0);
+                            final String title = cursor.getString(1);
+                            final String description = cursor.getString(2);
+                            final String loc = cursor.getString(3);
+                            final byte[] image = cursor.getBlob(4);
 
 
-                                                    m.showInfoWindow();
-                                                }
-                                                catch (IllegalStateException e)
-                                                {
-                                                    //Do Nothing
-                                                }
-                                                catch (NullPointerException e)
-                                                {
-                                                    //Do Nothing
-                                                }
-                                            }
-                                            while(cursor2.moveToNext());
+                            Geocoder geocoder = new Geocoder(getActivity());
 
-                                        }
-                                    }
-                                    cursor2.close();
-                                    /*Intent intent = new Intent(getBaseContext(), Activity.class);
-                                    String reference = mMarkerPlaceLink.get(arg0.getId());
-                                    intent.putExtra("reference", reference);
-
-                                    // Starting the  Activity
-                                    startActivity(intent);
-                                    Log.d("mGoogleMap1", "Activity_Calling");*/
-                                }
-                            });
-                        }
-
-                        /*Geocoder geocoder = new Geocoder(<your context>);
-                        List<Address> addresses;
-                        addresses = geocoder.getFromLocationName(<String address>, 1);
-                        if(addresses.size() > 0) {
-                            double latitude= addresses.get(0).getLatitude();
-                            double longitude= addresses.get(0).getLongitude();
-                        }
-
-
-                        LatLng sydney = new LatLng(-34, 151);
-                        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-                        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                            @Override
-                            public void onMapClick(LatLng latLng) {
-                                mMap.addMarker(new MarkerOptions().position(latLng).title(latLng.latitude + " : " + latLng.longitude));
-                                mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            try {
+                                addresses = geocoder.getFromLocationName(loc, 1);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        });*/
-                        //list.add(Food.getLocation(loc));
-                    }
-                    catch (IllegalStateException e)
-                    {
-                        //Do Nothing
-                    }
-                    catch (NullPointerException e)
-                    {
-                        //Do Nothing
-                    }
-                }
-                while(cursor.moveToNext());
+                            if (addresses.size() > 0) {
+                                double latitude = addresses.get(0).getLatitude();
+                                double longitude = addresses.get(0).getLongitude();
 
+                                mp.position(new LatLng(latitude, longitude));
+
+                                Log.e("Inserted Marker", "inserted latitude " + latitude + ", inserted Longitude " + longitude);
+
+                                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+
+                                InfoWindowData info = new InfoWindowData();
+                                info.setImage(image);
+                                info.setHotel(title);
+                                info.setFood(description);
+                                info.setTransport(loc);
+
+                                CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(getActivity());
+                                mMap.setInfoWindowAdapter(customInfoWindow);
+
+                                Marker m = mMap.addMarker(mp);
+                                m.setTag(info);
+                                mMap.moveCamera(center);
+                                mMap.animateCamera(zoom);
+
+                                m.showInfoWindow();
+                            }
+                        }
+                        catch (IllegalStateException e)
+                        {
+                            //Do Nothing
+                        }
+                        catch (NullPointerException e)
+                        {
+                            //Do Nothing
+                        }
+                    }
+                    while(cursor.moveToNext());
+
+                }
             }
+            cursor.close();
+
         }
-        cursor.close();
 
         // Add a marker in Sydney and move the camera
         /*LatLng sydney = new LatLng(-34, 151);
@@ -186,6 +136,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         });*/
-    }
 }
 
