@@ -54,7 +54,7 @@ public class MemoryList extends AppCompatActivity {
         gridView.setAdapter(adapter);
 
         // get all data from sqlite
-        Cursor cursor = MemoriesFragment.sqLiteHelper.getData("SELECT * FROM FOOD");
+        Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM FOOD");
         list.clear();
         if(cursor.getCount() > 0)
         {
@@ -108,7 +108,7 @@ public class MemoryList extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         if (item == 0) {
                             // update
-                            Cursor c = MemoriesFragment.sqLiteHelper.getData("SELECT id FROM FOOD");
+                            Cursor c = MainActivity.sqLiteHelper.getData("SELECT id FROM FOOD");
                             ArrayList<Integer> arrID = new ArrayList<Integer>();
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
@@ -118,7 +118,7 @@ public class MemoryList extends AppCompatActivity {
 
                         } else {
                             // delete
-                            Cursor c = MemoriesFragment.sqLiteHelper.getData("SELECT id FROM FOOD");
+                            Cursor c = MainActivity.sqLiteHelper.getData("SELECT id FROM FOOD");
                             ArrayList<Integer> arrID = new ArrayList<Integer>();
                             while (c.moveToNext()){
                                 arrID.add(c.getInt(0));
@@ -227,7 +227,7 @@ public class MemoryList extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    MemoriesFragment.sqLiteHelper.updateData(
+                    MainActivity.sqLiteHelper.updateData(
                             edtTitle.getText().toString().trim(),
                             edtDes.getText().toString().trim(),
                             edtLoc.getText().toString().trim(),
@@ -254,7 +254,7 @@ public class MemoryList extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
-                    MemoriesFragment.sqLiteHelper.deleteData(idFood);
+                    MainActivity.sqLiteHelper.deleteData(idFood);
                     Toast.makeText(getApplicationContext(), "Delete successfully!!!",Toast.LENGTH_SHORT).show();
                 } catch (Exception e){
                     Log.e("error", e.getMessage());
@@ -274,7 +274,7 @@ public class MemoryList extends AppCompatActivity {
 
     private void updateFoodList(){
         // get all data from sqlite
-        Cursor cursor = MemoriesFragment.sqLiteHelper.getData("SELECT * FROM FOOD");
+        Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM FOOD");
         list.clear();
         while (cursor.moveToNext()) {
             int id = cursor.getInt(0);
