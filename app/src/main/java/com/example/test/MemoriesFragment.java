@@ -66,8 +66,6 @@ public class MemoriesFragment extends Fragment {
     private Location onlyOneLocation;
     private final int REQUEST_FINE_LOCATION = 1234;
 
-    public static SQLiteHelper sqLiteHelper;
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -86,10 +84,6 @@ public class MemoriesFragment extends Fragment {
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION);
-
-        sqLiteHelper = new SQLiteHelper(getActivity(), "MemoryDB.sqlite", null, 1);
-
-        sqLiteHelper.queryData("CREATE TABLE IF NOT EXISTS FOOD(Id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR, description VARCHAR, location VARCHAR, image BLOB)");
 
         btnChoose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +109,7 @@ public class MemoriesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try{
-                    sqLiteHelper.insertData(
+                    MainActivity.sqLiteHelper.insertData(
                             edtTitle.getText().toString().trim(),
                             edtDes.getText().toString().trim(),
                             edtLoc.getText().toString().trim(),
