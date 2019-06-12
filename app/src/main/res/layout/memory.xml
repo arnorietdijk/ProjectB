@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/background1"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,7 +31,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="85dp"
+        android:layout_marginStart="150dp"
         android:layout_marginLeft="85dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="116dp"
@@ -48,8 +48,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="142dp"
-        android:layout_marginLeft="142dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginLeft="150dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="163dp"
         android:layout_marginRight="163dp"
@@ -65,29 +65,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="140dp"
+        android:layout_marginStart="150dp"
         android:layout_marginLeft="140dp"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="23dp"
         android:layout_marginEnd="171dp"
         android:layout_marginRight="171dp"
         android:text="Location" />
-
-    <TextView
-        android:id="@+id/txtDate"
-        android:layout_width="209dp"
-        android:layout_height="35dp"
-        android:textSize="24sp"
-        android:layout_below="@+id/txtLoc"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="143dp"
-        android:layout_marginLeft="143dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="167dp"
-        android:layout_marginRight="167dp"
-        android:text="Date" />
 
     <Button
         android:id="@+id/btnShare"
@@ -98,9 +81,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="127dp"
+        android:layout_marginStart="150dp"
         android:layout_marginLeft="127dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="535dp"
+        android:layout_marginBottom="300dp"
         android:layout_marginEnd="149dp"
         android:layout_marginRight="149dp"
         android:text="Share" />
