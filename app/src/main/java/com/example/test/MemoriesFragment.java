@@ -113,19 +113,19 @@ public class MemoriesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                        MainActivity.sqLiteHelper.insertData(
-                                edtTitle.getText().toString().trim(),
-                                edtDes.getText().toString().trim(),
-                                edtLoc.getText().toString().trim(),
-                                imageViewToByte(imageView)
-                        );
+                    MainActivity.sqLiteHelper.insertData(
+                            edtTitle.getText().toString().trim(),
+                            edtDes.getText().toString().trim(),
+                            edtLoc.getText().toString().trim(),
+                            imageViewToByte(imageView)
+                    );
 
-                        Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
 
-                        edtTitle.setText("");
-                        edtDes.setText("");
-                        edtLoc.setText("");
-                        imageView.setImageResource(R.mipmap.ic_launcher);
+                    edtTitle.setText("");
+                    edtDes.setText("");
+                    edtLoc.setText("");
+                    imageView.setImageResource(R.drawable.no_picture);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
