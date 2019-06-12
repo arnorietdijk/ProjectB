@@ -59,73 +59,73 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         final MarkerOptions mp = new MarkerOptions();
         final Cursor cursor = MainActivity.sqLiteHelper.getData("SELECT * FROM FOOD;");
         // get all data from sqlite
-            if(cursor.getCount() > 0)
+        if(cursor.getCount() > 0)
+        {
+            if(cursor.moveToFirst())
             {
-                if(cursor.moveToFirst())
+                do
                 {
-                    do
+                    try
                     {
-                        try
-                        {
-                            final int id = cursor.getInt(0);
-                            final String title = cursor.getString(1);
-                            final String description = cursor.getString(2);
-                            final String loc = cursor.getString(3);
-                            final byte[] image = cursor.getBlob(4);
+                        final int id = cursor.getInt(0);
+                        final String title = cursor.getString(1);
+                        final String description = cursor.getString(2);
+                        final String loc = cursor.getString(3);
+                        final byte[] image = cursor.getBlob(4);
 
 
-                            Geocoder geocoder = new Geocoder(getActivity());
+                        Geocoder geocoder = new Geocoder(getActivity());
 
-                            try {
-                                addresses = geocoder.getFromLocationName(loc, 1);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            if (addresses.size() > 0) {
-                                double latitude = addresses.get(0).getLatitude();
-                                double longitude = addresses.get(0).getLongitude();
-
-                                mp.position(new LatLng(latitude, longitude));
-
-                                Log.e("Inserted Marker", "inserted latitude " + latitude + ", inserted Longitude " + longitude);
-
-                                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
-
-                                InfoWindowData info = new InfoWindowData();
-                                info.setImage(image);
-                                info.setHotel(title);
-                                info.setFood(description);
-                                info.setTransport(loc);
-
-                                CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(getActivity());
-                                mMap.setInfoWindowAdapter(customInfoWindow);
-
-                                Marker m = mMap.addMarker(mp);
-                                m.setTag(info);
-                                mMap.moveCamera(center);
-                                mMap.animateCamera(zoom);
-
-                                m.showInfoWindow();
-                            }
+                        try {
+                            addresses = geocoder.getFromLocationName(loc, 1);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        catch (IllegalStateException e)
-                        {
-                            //Do Nothing
-                        }
-                        catch (NullPointerException e)
-                        {
-                            //Do Nothing
+                        if (addresses.size() > 0) {
+                            double latitude = addresses.get(0).getLatitude();
+                            double longitude = addresses.get(0).getLongitude();
+
+                            mp.position(new LatLng(latitude, longitude));
+
+                            Log.e("Inserted Marker", "inserted latitude " + latitude + ", inserted Longitude " + longitude);
+
+                            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, longitude));
+
+                            InfoWindowData info = new InfoWindowData();
+                            info.setImage(image);
+                            info.setHotel(title);
+                            info.setFood(description);
+                            info.setTransport(loc);
+
+                            CustomInfoWindowGoogleMap customInfoWindow = new CustomInfoWindowGoogleMap(getActivity());
+                            mMap.setInfoWindowAdapter(customInfoWindow);
+
+                            Marker m = mMap.addMarker(mp);
+                            m.setTag(info);
+                            mMap.moveCamera(center);
+                            mMap.animateCamera(zoom);
+
+                            m.showInfoWindow();
                         }
                     }
-                    while(cursor.moveToNext());
-
+                    catch (IllegalStateException e)
+                    {
+                        //Do Nothing
+                    }
+                    catch (NullPointerException e)
+                    {
+                        //Do Nothing
+                    }
                 }
+                while(cursor.moveToNext());
+
             }
-            cursor.close();
-
         }
+        cursor.close();
 
-        // Add a marker in Sydney and move the camera
+    }
+
+    // Add a marker in Sydney and move the camera
         /*LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
@@ -137,4 +137,3 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             }
         });*/
 }
-
