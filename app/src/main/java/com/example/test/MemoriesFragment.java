@@ -113,10 +113,6 @@ public class MemoriesFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    if (TextUtils.isEmpty(strTitle) || TextUtils.isEmpty(strDes) || TextUtils.isEmpty(strLoc)) {
-                        Toast.makeText(getActivity(), "please fill something in!", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
                         MainActivity.sqLiteHelper.insertData(
                                 edtTitle.getText().toString().trim(),
                                 edtDes.getText().toString().trim(),
@@ -130,8 +126,6 @@ public class MemoriesFragment extends Fragment {
                         edtDes.setText("");
                         edtLoc.setText("");
                         imageView.setImageResource(R.mipmap.ic_launcher);
-                    }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

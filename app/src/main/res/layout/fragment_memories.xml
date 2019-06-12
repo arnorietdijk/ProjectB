@@ -9,7 +9,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:background="@drawable/Memories"
+    android:background="@drawable/memories"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
     <EditText
@@ -21,7 +21,11 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="130dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="83dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginRight="26dp"
         android:ems="10"
         android:hint="Title"
         android:inputType="textPersonName" />
@@ -35,7 +39,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="45dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:ems="10"
         android:hint="Description"
         android:inputType="textPersonName" />
@@ -71,9 +79,9 @@
         android:layout_below="@+id/imageView"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginStart="35dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginTop="34dp"
+        android:layout_marginStart="51dp"
+        android:layout_marginLeft="51dp"
+        android:layout_marginTop="22dp"
         android:text="Add" />
 
     <Button
@@ -81,9 +89,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView"
-        android:layout_marginStart="100dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="35dp"
+        android:layout_marginStart="99dp"
+        android:layout_marginLeft="99dp"
+        android:layout_marginTop="17dp"
         android:layout_toEndOf="@+id/btnAdd"
         android:layout_toRightOf="@+id/btnAdd"
         android:text="Memory List" />
@@ -97,11 +105,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="45dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginRight="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginRight="17dp"
         android:ems="10"
         android:hint="Location"
         android:inputType="textPersonName" />
@@ -123,5 +131,7 @@
         android:layout_width="291dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edtLoc"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"
+        android:text="Set location automatically"
+        tools:text="Set location automatically" />
 </RelativeLayout>
