@@ -159,7 +159,6 @@ public class MemoryList extends AppCompatActivity {
         TextView txtTitle = (TextView) popupView.findViewById(R.id.txtTitle);
         TextView txtDes = (TextView) popupView.findViewById(R.id.txtDes);
         TextView txtLoc = (TextView) popupView.findViewById(R.id.txtLoc);
-        TextView txtDate = (TextView) popupView.findViewById(R.id.txtDate);
         Button btnshare = (Button) popupView.findViewById(R.id.btnShare);
 
         // If the PopupWindow should be focusable
