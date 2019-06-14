@@ -161,10 +161,15 @@ public class MemoryList extends AppCompatActivity {
         final PopupWindow popupWindow = new PopupWindow(popupView,
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
+        int width = (int) (popupView.getResources().getDisplayMetrics().widthPixels * 0.95);
+        // set height for dialog
+        int height = (int) (popupView.getResources().getDisplayMetrics().heightPixels * 0.8);
+        popupWindow.setWidth(width);
+        popupWindow.setHeight(height);
+
         TextView txtTitle = (TextView) popupView.findViewById(R.id.txtTitle);
         TextView txtDes = (TextView) popupView.findViewById(R.id.txtDes);
         TextView txtLoc = (TextView) popupView.findViewById(R.id.txtLoc);
-        Button btnshare = (Button) popupView.findViewById(R.id.btnShare);
 
         // If the PopupWindow should be focusable
         popupWindow.setFocusable(true);

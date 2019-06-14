@@ -7,19 +7,19 @@
 
     <ImageView
         android:id="@+id/imageViewFood"
-        android:layout_width="216dp"
-        android:layout_height="149dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="145dp"
-        android:layout_marginRight="145dp"
-        app:srcCompat="@mipmap/ic_launcher" />
+        android:layout_marginStart="97dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="99dp"
+        app:srcCompat="@drawable/no_picture" />
 
     <TextView
         android:id="@+id/txtTitle"
@@ -30,12 +30,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="73dp"
-        android:layout_marginLeft="73dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="193dp"
-        android:layout_marginRight="193dp"
-        android:text="Title"
+        android:layout_marginStart="97dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="99dp"
         android:textSize="24sp" />
 
     <TextView
@@ -47,12 +46,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="99dp"
-        android:layout_marginLeft="99dp"
-        android:layout_marginTop="29dp"
-        android:layout_marginEnd="214dp"
-        android:layout_marginRight="214dp"
-        android:text="Description"
+        android:layout_marginStart="97dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="99dp"
         android:textSize="24sp" />
 
     <TextView
@@ -64,28 +62,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginStart="90dp"
-        android:layout_marginLeft="90dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="231dp"
-        android:layout_marginRight="231dp"
-        android:text="Location"
+        android:layout_marginStart="97dp"
+        android:layout_marginLeft="96dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginEnd="98dp"
+        android:layout_marginRight="99dp"
         android:textSize="24sp" />
-
-    <Button
-        android:id="@+id/btnShare"
-        android:layout_width="135dp"
-        android:layout_height="63dp"
-        android:layout_below="@+id/txtLoc"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="76dp"
-        android:layout_marginLeft="76dp"
-        android:layout_marginTop="23dp"
-        android:layout_marginEnd="223dp"
-        android:layout_marginRight="223dp"
-        android:layout_marginBottom="300dp"
-        android:text="Share" />
 </RelativeLayout>
