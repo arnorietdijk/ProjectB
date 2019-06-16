@@ -36,15 +36,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         statement.executeInsert();
     }
 
-    public void updateData(String title, String description, String loc, byte[] image, int id) {
+    public void updateData(String title, String description, String location, byte[] image, int id) {
         SQLiteDatabase database = getWritableDatabase();
 
-        String sql = "UPDATE FOOD SET title = ?, description = ?, loc = ?, image = ? WHERE id = ?";
+        String sql = "UPDATE FOOD SET title = ?, description = ?, location = ?, image = ? WHERE id = ?";
         SQLiteStatement statement = database.compileStatement(sql);
 
         statement.bindString(1, title);
         statement.bindString(2, description);
-        statement.bindString(3, loc);
+        statement.bindString(3, location);
         statement.bindBlob(4, image);
         statement.bindDouble(5, (double)id);
 

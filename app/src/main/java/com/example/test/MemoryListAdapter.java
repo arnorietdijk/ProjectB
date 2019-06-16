@@ -46,7 +46,6 @@ public class MemoryListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
-
         View row = view;
         ViewHolder holder = new ViewHolder();
 
@@ -74,6 +73,7 @@ public class MemoryListAdapter extends BaseAdapter {
         Bitmap bitmap = BitmapFactory.decodeByteArray(foodImage, 0, foodImage.length);
         holder.imageView.setImageBitmap(bitmap);
 
+        row.setBackgroundResource(R.drawable.grid_items_border);
         return row;
     }
 }

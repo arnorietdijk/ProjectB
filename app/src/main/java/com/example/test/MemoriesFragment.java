@@ -2,11 +2,13 @@ package com.example.test;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.assist.AssistContent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -48,6 +50,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,15 +59,17 @@ import static android.app.Activity.RESULT_OK;
 public class MemoriesFragment extends Fragment {
 
     EditText edtTitle, edtDes, edtLoc;
-    Button btnAdd, btnList, btnPic;
+    Button btnAdd, btnList, btnPic, btnChoose;
     ImageView imageView;
     CheckBox chkLoc;
     LocationTrack locationTrack;
+    Bitmap bmp;
 
     final int REQUEST_CODE_GALLERY = 999;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     private LocationManager locationManager;
     private Location onlyOneLocation;
+    private final int ACTIVITY_SELECT_IMAGE = 1234;
     private final int REQUEST_FINE_LOCATION = 1234;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,7 +81,7 @@ public class MemoriesFragment extends Fragment {
         edtTitle = (EditText) rootView.findViewById(R.id.edtTitle);
         edtDes = (EditText) rootView.findViewById(R.id.edtDes);
         edtLoc = (EditText) rootView.findViewById(R.id.edtLoc);
-        Button btnChoose = (Button) rootView.findViewById(R.id.btnChoose);
+        btnChoose = (Button) rootView.findViewById(R.id.btnChoose);
         btnAdd = (Button) rootView.findViewById(R.id.btnAdd);
         btnList = (Button) rootView.findViewById(R.id.btnList);
         btnPic = (Button) rootView.findViewById(R.id.btnPic);
@@ -92,12 +97,16 @@ public class MemoriesFragment extends Fragment {
         btnChoose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                /*if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     requestPermissions( //Method of Fragment
                             new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                             REQUEST_CODE_GALLERY
+
                     );
-                }
+                }*/
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                startActivityForResult(i, ACTIVITY_SELECT_IMAGE);
             }
         });
         btnPic.setOnClickListener(new View.OnClickListener(){
@@ -112,12 +121,17 @@ public class MemoriesFragment extends Fragment {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bitmap x = BitmapFactory.decodeByteArray(imageViewToByte(imageView),0, imageViewToByte(imageView).length);
+                Bitmap bmp = getResizedBitmap(x, 640,480);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                final byte[] byteArray = stream.toByteArray();
                 try {
                     MainActivity.sqLiteHelper.insertData(
                             edtTitle.getText().toString().trim(),
                             edtDes.getText().toString().trim(),
                             edtLoc.getText().toString().trim(),
-                            imageViewToByte(imageView)
+                            byteArray
                     );
 
                     Toast.makeText(getActivity().getApplicationContext(), "Added successfully!", Toast.LENGTH_SHORT).show();
@@ -167,6 +181,23 @@ public class MemoriesFragment extends Fragment {
         return rootView;
     }
 
+    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        // CREATE A MATRIX FOR THE MANIPULATION
+        Matrix matrix = new Matrix();
+        // RESIZE THE BIT MAP
+        matrix.postScale(scaleWidth, scaleHeight);
+
+        // "RECREATE" THE NEW BITMAP
+        Bitmap resizedBitmap = Bitmap.createBitmap(
+                bm, 0, 0, width, height, matrix, false);
+        bm.recycle();
+        return resizedBitmap;
+    }
+
     public String getAddress(Context ctx, double lat, double lng){
         String fullAdd=null;
         try{
@@ -206,18 +237,6 @@ public class MemoriesFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        if(requestCode == REQUEST_CODE_GALLERY){
-            if(grantResults.length >0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent, REQUEST_CODE_GALLERY);
-            }
-            else {
-                Toast.makeText(getActivity().getApplicationContext(), "You don't have permission to access file location!", Toast.LENGTH_SHORT).show();
-            }
-            return;
-        }
-
         switch (requestCode) {
             case REQUEST_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -238,7 +257,7 @@ public class MemoriesFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if(requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK && data != null){
+        if(requestCode == ACTIVITY_SELECT_IMAGE && resultCode == RESULT_OK && data != null){
             Uri uri = data.getData();
 
             try {
